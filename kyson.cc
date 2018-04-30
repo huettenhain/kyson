@@ -109,7 +109,7 @@ LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM w, LPARAM l)
 	return DefWindowProc(wnd, msg, w, l);
 }
 
-int main() {
+void __declspec(noreturn) main() {
 	WNDCLASS wc = { 0 };
 	wc.lpfnWndProc = WndProc;
 	wc.lpszClassName = INTERNAL_CLASS;
@@ -123,5 +123,5 @@ int main() {
 			}
 		}
 	}
-	return 0;
+    ExitProcess(0);
 }
