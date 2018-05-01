@@ -13,8 +13,10 @@ void PopUp(HWND wnd) {
 		pu = GetSubMenu(pu, 0);
 		if (kyson)
 			CheckMenuItem(pu, ID_KEEP, MF_CHECKED | MF_BYCOMMAND);
-		TrackPopupMenu(pu, TPM_BOTTOMALIGN | TPM_LEFTBUTTON,
-			pt.x, pt.y, 0, wnd, NULL);
+		if (SetForegroundWindow(wnd)) {
+			TrackPopupMenu(pu, TPM_BOTTOMALIGN | TPM_LEFTBUTTON,
+				pt.x, pt.y, 0, wnd, NULL);
+		}
 	}
 }
 
