@@ -1,18 +1,20 @@
 #include "resource.h"
 #include <windows.h>
+#include <Wtsapi32.h>
 
 #define WM_TRAYICON WM_USER
 const char INTERNAL_CLASS[] = "kyC";
 const char INTERNAL_WINDO[] = "kyW";
-BOOL kyson = FALSE;
+BOOL keep = FALSE;
+BOOL lock = FALSE;
 
 void PopUp(HWND wnd) {
 	HMENU pu = LoadMenu(GetModuleHandle(NULL), MAKEINTRESOURCE(IDR_MENU));
 	POINT pt;
 	if (pu && GetCursorPos(&pt)) {
 		pu = GetSubMenu(pu, 0);
-		if (kyson)
-			CheckMenuItem(pu, ID_KEEP, MF_CHECKED | MF_BYCOMMAND);
+		if (keep) CheckMenuItem(pu, ID_KEEP, MF_CHECKED | MF_BYCOMMAND);
+		if (lock) CheckMenuItem(pu, ID_LOCK, MF_CHECKED | MF_BYCOMMAND);
 		if (SetForegroundWindow(wnd)) {
 			TrackPopupMenu(pu, TPM_BOTTOMALIGN | TPM_LEFTBUTTON,
 				pt.x, pt.y, 0, wnd, NULL);
@@ -63,15 +65,15 @@ void DeleteIcon(HWND wnd) {
 }
 
 void SwitchKyson(HWND wnd) {
-	if (kyson) {
+	if (keep) {
 		SetThreadExecutionState(ES_CONTINUOUS);
 		SetIcon(wnd, IDI_OFF);
-		kyson = FALSE;
+		keep = FALSE;
 	}
 	else {
 		SetThreadExecutionState(ES_CONTINUOUS | ES_DISPLAY_REQUIRED);
 		SetIcon(wnd, IDI_SCREEN);
-		kyson = TRUE;
+		keep = TRUE;
 	}
 }
 
@@ -79,10 +81,18 @@ LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM w, LPARAM l)
 {
 	switch (msg)
 	{
+	case WM_WTSSESSION_CHANGE:
+		if (lock && w == WTS_SESSION_LOCK)
+			SendMessage(wnd, WM_SYSCOMMAND, SC_MONITORPOWER, 2);
+		break;
 	case WM_CREATE:
+		WTSRegisterSessionNotification(wnd, NOTIFY_FOR_THIS_SESSION);
 		break;
 	case WM_COMMAND:
 		switch (w) {
+		case ID_LOCK:
+			lock = !lock;
+			break;
 		case ID_KEEP:
 			SwitchKyson(wnd);
 			break;
@@ -102,7 +112,7 @@ LRESULT CALLBACK WndProc(HWND wnd, UINT msg, WPARAM w, LPARAM l)
 		}
 		return TRUE;
 	case WM_DESTROY:
-		if (kyson) SwitchKyson(wnd);
+		if (keep) SwitchKyson(wnd);
 		DeleteIcon(wnd);
 		PostQuitMessage(0);
 		break;
@@ -116,7 +126,8 @@ void __declspec(noreturn) main() {
 	wc.lpfnWndProc = WndProc;
 	wc.lpszClassName = INTERNAL_CLASS;
 	if (RegisterClass(&wc)) {
-		kyson = FALSE;
+		keep = FALSE;
+		lock = TRUE;
 		if (SetIcon(NULL, IDI_OFF)) {
 			MSG msg;
 			while (GetMessage(&msg, NULL, 0, 0)) {

@@ -13,13 +13,16 @@
 #define ID_QUIT_ERGERG                  40005
 #define ID_QUIT_ERERGERGG               40006
 #define ID_KEEP                         40007
+#define ID_KYSON_SCREENOFFWHENLOCKED    40008
+#define ID_SLOCK                        40009
+#define ID_LOCK                         40010
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        107
-#define _APS_NEXT_COMMAND_VALUE         40008
+#define _APS_NEXT_COMMAND_VALUE         40011
 #define _APS_NEXT_CONTROL_VALUE         1001
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
