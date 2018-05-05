@@ -4,4 +4,4 @@ This simple program provides a notification tray icon which can be toggled to ei
 
 In case you are wondering why anyone would have that problem, here's my user story: I want the screen to stay lit when reading something, but I generally prefer to have it turn off after a short time when I am doing anything else: It is my firm belief that it saves me a lot of power (and money).
 
-Since saving power was the original point, Kyson can now turn the screen off when the session is locked, something that I usually want to happen.
+Since saving power was the original point, Kyson has two additional options: By default, it will stop keeping the screen lit once the machine is locked, and it will also just turn the display off immediately when that happens.
