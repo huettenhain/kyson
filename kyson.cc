@@ -48,7 +48,8 @@ public:
                 off_when_locked = !off_when_locked;
                 break;
             case ID_KEEP:
-                toggle();
+                busy = !busy;
+                screenImplement();
                 break;
             case ID_QUIT:
                 DestroyWindow(wnd);
@@ -58,7 +59,8 @@ public:
         case WM_USER:
             switch (l) {
             case WM_LBUTTONUP:
-                toggle();
+                busy = !busy;
+                screenImplement();
                 break;
             case WM_RBUTTONUP:
                 openMenu();
@@ -109,7 +111,7 @@ public:
                     if (Shell_NotifyIcon(NIM_ADD, &nf)) {
                         MSG msg;
                         success = true;
-                        setIcon();
+                        screenImplement();
                         while (GetMessage(&msg, NULL, 0, 0)) {
                             TranslateMessage(&msg);
                             DispatchMessage(&msg);
@@ -123,8 +125,7 @@ public:
     }
 
 private:
-    void toggle() {
-        busy = !busy;
+    void screenImplement() {
         setIcon();
         if (busy) screenOn();
         else screenOff();
